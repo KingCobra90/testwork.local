@@ -32,8 +32,13 @@ class MessageController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow',
-				'actions'=>array('create','update', 'delete', 'admin'),
+				'actions'=>array('create', 'admin'),
 				'users'=>array('@'),
+			),
+			array('allow',
+				'actions'=>array('update', 'delete'),
+				'users'=>array('@'),
+				'expression' => 'Yii::app()->controller->isOwner()',
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -41,6 +46,11 @@ class MessageController extends Controller
 		);
 	}
 
+	public function isOwner(){
+		$owner_id = $this->loadModel(Yii::app()->getRequest()->getQuery("id"))->user->id;
+        return $owner_id === Yii::app()->user->id;
+    }
+	
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
